@@ -7,27 +7,29 @@
 
 ## WRRC
 
-![WRRC](./images/WRRC3.jpg)
+![WRRC](./images/WRRC4.jpg)
 
 ## Overview
-for toady lap i will send get requests to Database and display data
-then create post request to add data 
-1. /getMovies
-2. /addMovieInfo
+for toady lap i will send do the following:
+1. /UPDATE/id create an update request to update comments for a specific movie in the database.
+2. /DELETE/id create a delete request to remove a specific movie from your database.
+3. /getMovie/id  Create a get request to get a specific movie from the database
 
 ## Getting Started
 <!-- What are the steps that a user must take in order to build this app on their own machine and get it running? -->
 1. clone the url for my repo project on your machine by (git clone git@github.com:JanaAlmomani/Movies-Library.git)
-2. put this command (sqlstart)to start DBMS to access our database and in end you stoped by(sqlstop)
+2. run the command (npm i )then on root  put this command (sqlstart)to start DBMS to access our database and then (psql then create a DB bc it's locally )and then do(\c DB_NAME) and (\dt to see the tables and work with it by quary ended by (;)in end you stoped by(sqlstop)
 3. then put this command (nodemon) to run the server 
-4. copy the url of the route you went to see and put it on the browser just the Get
-5. but the Post send the req using thunder client to write the data inside the body
-6. if you want to see the Database you can by run this command(psgl,and then \l to see all database in DBMS)
+4. copy the url of the route you went to see and put it on the  thunder client and spicetify if it GET,POST,DELETE,PUT 
+5. after send the req ,you will git the res
+
 ## Project Features
 <!-- What are the features included in you app -->
 my app give the information about movies represent the information depending on the specific request
 in the first i have 6 routes and i can send many requests
-for the server without any problem .
-for today lab i added 2 routes:
-1.  /getMovies it will return the data that inside the table in our database after added data using the (post) by using specific query .
-2. /addMovieInfo to add data inside the table in our database it will send the req to the DBMS by using specific query and will write the data inside the body and then make the res by render these data into table.
+for the server,API and access DB by DBMS without any problem.
+for today lab i added 3 routes:
+1.  /deleteMovie/:id  this req will go to DB (it will delete specific row from the table Depending on the the condition )
+2. /updateMovie/:id   this req will go to DB (it will update specific row from the table Depending on the the condition )
+3. /getMovies/:id  this req will go to DB (it will get specific row from the table Depending on the the condition )
+condition :i mean the id value here
