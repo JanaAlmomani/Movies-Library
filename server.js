@@ -1,5 +1,4 @@
 'use strict';
-// test From Ala' 
 //import the express framework
 
 const express = require('express');
@@ -18,7 +17,7 @@ const data = require('./Movie Data/data.json');
 server.use(cors());
 server.use(express.json());
 const pg = require('pg'); // importing the pg 
-const PORT = 3000;
+const PORT = 3001;
 
 const client = new pg.Client(process.env.DATABASE_URL);
 //constructor
@@ -44,22 +43,28 @@ function Network(id, file_type, file_path, aspect_ratio) {
     this.file_path = file_path;
     this.aspect_ratio = aspect_ratio;
 }
-// http://localhost:3000/
+// http://localhost:3001/
 server.get('/', homeHandler)
-// http://localhost:3000/favorite
+// http://localhost:3001/favorite
 server.get('/favorite', favoriteHandler)
-//http://localhost:3000/trending
+//http://localhost:3001/trending
 server.get('/trending', trendingHandler)
-//http://localhost:3000/search
+//http://localhost:3001/search
 server.get('/search', searchHandler)
-//http://localhost:3000/genres
+//http://localhost:3001/genres
 server.get('/genres', genresHandler)
-//http://localhost:3000/network
+//http://localhost:3001/network
 server.get('/network', networkHandler)
-//http://localhost:3000/getMovies
+//http://localhost:3001/getMovies
 server.get('/getMovies', getMoviesHandler)
-//http://localhost:3000/addMovieInfo
+//http://localhost:3001/addMovieInfo
 server.post('/addMovieInfo', addMovieInfoHandler)
+//http://localhost:3001/deleteMovie/:id
+server.delete('/deleteMovie/:id',deleteMovieHandler)
+//http://localhost:3001/updateMovie/:id
+server.put('/updateMovie/:id',updateMovieHandler)
+//http://localhost:3001/getMovies/:id
+server.get('/getMovies/:id',getMoviesByIdHandler)
 //wronge route
 server.get('*', defaltHandler)
 server.use(errorHandler)
@@ -163,9 +168,8 @@ function errorHandler(erorr, req, res) {
     }
     res.status(500).send(err);
 }
-
 function getMoviesHandler(req, res) {
-    const sql = `SELECT * FROM moviesInfo`;
+    const sql = `SELECT * FROM moviesinfo`;
     client.query(sql)
         .then((data) => {
             res.send(data.rows);
@@ -177,8 +181,8 @@ function getMoviesHandler(req, res) {
 function addMovieInfoHandler(req, res) {
     const newMovie = req.body;
     console.log(newMovie);
-    const sql = `INSERT INTO moviesInfo (title, release_date, poster_path,overview) VALUES ($1,$2,$3,$4) RETURNING *;`
-    const values = [newMovie.title, newMovie.release_date, newMovie.poster_path, newMovie.overview];
+    const sql = `INSERT INTO moviesInfo (title,release_date,poster_path,overview) VALUES ($1,$2,$3,$4) RETURNING *;`
+    const values = [newMovie.title, newMovie.release_date,newMovie.poster_path, newMovie.overview];
     //console.log(sql);
     client.query(sql, values)
         .then((data) => {
@@ -188,9 +192,41 @@ function addMovieInfoHandler(req, res) {
             errorHandler(error, req, res);
         });
 }
-
-
-// http://localhost:3000
+function deleteMovieHandler(req,res){
+    const id = req.params.id;
+    const sql = `DELETE FROM moviesInfo WHERE id=${id}`;
+    client.query(sql)
+    .then((data)=>{
+        res.status(204).json({});
+    })
+    .catch((err)=>{
+        errorHandler(err,req,res);
+    })
+}
+function updateMovieHandler(req,res){
+    const id = req.params.id;
+    const sql = `UPDATE moviesInfo SET title=$1, release_date=$2, poster_path=$3 ,overview=$4 WHERE id=${id} RETURNING *`;
+    const values = [req.body.title,req.body.release_date,req.body.poster_path,req.body.overview];
+    client.query(sql,values)
+    .then((data)=>{
+        res.status(200).send(data.rows);
+    })
+    .catch((err)=>{
+        errorHandler(err,req,res);
+    })
+}
+function getMoviesByIdHandler(req,res){
+    const id = req.params.id;
+    const sql = `SELECT * FROM moviesInfo WHERE id=${id}`;
+    client.query(sql)
+        .then((data) => {
+            res.send(data.rows);
+        })
+        .catch((err) => {
+            errorHandler(err, req, res);
+        })
+}
+// http://localhost:3001
 
 client.connect()
     .then(() => {
