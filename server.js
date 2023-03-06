@@ -17,7 +17,7 @@ const data = require('./Movie Data/data.json');
 server.use(cors());
 server.use(express.json());
 const pg = require('pg'); // importing the pg 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 const client = new pg.Client(process.env.DATABASE_URL);
 //constructor
@@ -60,11 +60,11 @@ server.get('/getMovies', getMoviesHandler)
 //http://localhost:3001/addMovieInfo
 server.post('/addMovieInfo', addMovieInfoHandler)
 //http://localhost:3001/deleteMovie/:id
-server.delete('/deleteMovie/:id',deleteMovieHandler)
+server.delete('/deleteMovie/:id', deleteMovieHandler)
 //http://localhost:3001/updateMovie/:id
-server.put('/updateMovie/:id',updateMovieHandler)
+server.put('/updateMovie/:id', updateMovieHandler)
 //http://localhost:3001/getMovies/:id
-server.get('/getMovies/:id',getMoviesByIdHandler)
+server.get('/getMovies/:id', getMoviesByIdHandler)
 //wronge route
 server.get('*', defaltHandler)
 server.use(errorHandler)
@@ -182,7 +182,7 @@ function addMovieInfoHandler(req, res) {
     const newMovie = req.body;
     console.log(newMovie);
     const sql = `INSERT INTO moviesInfo (title,release_date,poster_path,overview) VALUES ($1,$2,$3,$4) RETURNING *;`
-    const values = [newMovie.title, newMovie.release_date,newMovie.poster_path, newMovie.overview];
+    const values = [newMovie.title, newMovie.release_date, newMovie.poster_path, newMovie.overview];
     //console.log(sql);
     client.query(sql, values)
         .then((data) => {
@@ -192,30 +192,30 @@ function addMovieInfoHandler(req, res) {
             errorHandler(error, req, res);
         });
 }
-function deleteMovieHandler(req,res){
+function deleteMovieHandler(req, res) {
     const id = req.params.id;
     const sql = `DELETE FROM moviesInfo WHERE id=${id}`;
     client.query(sql)
-    .then((data)=>{
-        res.status(204).json({});
-    })
-    .catch((err)=>{
-        errorHandler(err,req,res);
-    })
+        .then((data) => {
+            res.status(204).json({});
+        })
+        .catch((err) => {
+            errorHandler(err, req, res);
+        })
 }
-function updateMovieHandler(req,res){
+function updateMovieHandler(req, res) {
     const id = req.params.id;
     const sql = `UPDATE moviesInfo SET title=$1, release_date=$2, poster_path=$3 ,overview=$4 WHERE id=${id} RETURNING *`;
-    const values = [req.body.title,req.body.release_date,req.body.poster_path,req.body.overview];
-    client.query(sql,values)
-    .then((data)=>{
-        res.status(200).send(data.rows);
-    })
-    .catch((err)=>{
-        errorHandler(err,req,res);
-    })
+    const values = [req.body.title, req.body.release_date, req.body.poster_path, req.body.overview];
+    client.query(sql, values)
+        .then((data) => {
+            res.status(200).send(data.rows);
+        })
+        .catch((err) => {
+            errorHandler(err, req, res);
+        })
 }
-function getMoviesByIdHandler(req,res){
+function getMoviesByIdHandler(req, res) {
     const id = req.params.id;
     const sql = `SELECT * FROM moviesInfo WHERE id=${id}`;
     client.query(sql)
