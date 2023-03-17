@@ -181,8 +181,8 @@ function getMoviesHandler(req, res) {
 function addMovieInfoHandler(req, res) {
     const newMovie = req.body;
     console.log(newMovie);
-    const sql = `INSERT INTO moviesInfo (title,release_date,poster_path,overview) VALUES ($1,$2,$3,$4) RETURNING *;`
-    const values = [newMovie.title, newMovie.release_date, newMovie.poster_path, newMovie.overview];
+    const sql = `INSERT INTO moviesInfo (title,release_date,poster_path,overview,commentText) VALUES ($1,$2,$3,$4,$5) RETURNING *;`
+    const values = [newMovie.title, newMovie.release_date, newMovie.poster_path, newMovie.overview,newMovie.commentText];
     //console.log(sql);
     client.query(sql, values)
         .then((data) => {
