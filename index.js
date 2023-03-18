@@ -211,7 +211,7 @@ function updateMovieHandler(req, res) {
     client.query(sql, values).then(data => {
         const sql = `SELECT * FROM moviesinfo`;
         client.query(sql).then(data => {
-            return res.status(200).send(data.rows);
+            return res.status(200).json(data.rows);
         })
             .catch((err) => {
                 errorHandler(err, req, res);
