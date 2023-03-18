@@ -182,7 +182,7 @@ function addMovieInfoHandler(req, res) {
     const newMovie = req.body;
     console.log(newMovie);
     const sql = `INSERT INTO moviesInfo (title,release_date,poster_path,overview,commentText) VALUES ($1,$2,$3,$4,$5) RETURNING *;`
-    const values = [newMovie.title, newMovie.release_date, newMovie.poster_path, newMovie.overview,newMovie.commentText];
+    const values = [newMovie.title, newMovie.release_date, newMovie.poster_path, newMovie.overview, newMovie.commentText];
     //console.log(sql);
     client.query(sql, values)
         .then((data) => {
@@ -207,13 +207,18 @@ function updateMovieHandler(req, res) {
     const id = req.params.id;
     const sql = `UPDATE moviesInfo SET title=$1, release_date=$2, poster_path=$3 ,overview=$4, commentText=$5 WHERE id=${id} RETURNING *`;
     const values = [req.body.title, req.body.release_date, req.body.poster_path, req.body.overview, req.body.commentText];
-    client.query(sql, values)
-        .then((data) => {
-            res.status(200).send(data.rows);
+
+    client.query(sql, values).then(data => {
+        const sql = `SELECT * FROM moviesinfo`;
+        client.query(sql).then(data => {
+            return res.status(200).send(data.rows);
         })
-        .catch((err) => {
-            errorHandler(err, req, res);
-        })
+            .catch((err) => {
+                errorHandler(err, req, res);
+            });
+    }).catch((err) => {
+        errorHandler(err, req, res);
+    });
 }
 function getMoviesByIdHandler(req, res) {
     const id = req.params.id;
