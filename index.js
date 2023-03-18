@@ -195,10 +195,17 @@ function addMovieInfoHandler(req, res) {
 function deleteMovieHandler(req, res) {
     const id = req.params.id;
     const sql = `DELETE FROM moviesInfo WHERE id=${id}`;
-    client.query(sql)
-        .then((data) => {
-            res.status(204).json({});
+    client.query(sql).then((data) => {
+        // res.status(204).json({});
+        const sql = `SELECT * FROM moviesinfo`;
+        client.query(sql).then(data => {
+            return res.status(200).json(data.rows);
         })
+            .catch((err) => {
+                errorHandler(err, req, res);
+            });
+
+    })
         .catch((err) => {
             errorHandler(err, req, res);
         })
